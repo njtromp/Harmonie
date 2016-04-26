@@ -1,6 +1,5 @@
 #!/bin/bash
 echo "Activated at `date -u`"
-cd ~/Projects
 
 # Harmonie runs at 00:00, 06:00, 12:00, and 18:00 UTC 
 # Get the current UTC date and time
@@ -38,6 +37,7 @@ else
 	MODEL_HOUR=$2
 fi
 
+cd ~/Downloads
 # Make sure only to run when there actually is something to do.
 # This makes it possible to have this script be run as a cronjob every hour
 # and handle the UTC time here. The last successfull run is stored in the
@@ -50,6 +50,7 @@ fi
 
 # We could be just a tiny bit to early therefore we need to do the downloading and conversion in a loop!
 while true; do
+
 	# Wait untill the lid is open so we really can download...
 	source ~/Downloads/lid-status
 	while [ "${LID_STATUS}" == "CLOSED" ]; do
@@ -62,7 +63,6 @@ while true; do
 	# (Might not be a good idea though...)
 	while true; do
 		echo "Checking for new data `date -u`"
-		cd ~/Downloads
 		# User and password are stored in .netrc!
 		# ftp "ftp://data.knmi.nl/download/harmonie_p1/0.2/noversion/0000/00/00/harm36_v1_ned_surface_${MODEL_HOUR}.tgz"
 		/usr/local/bin/wget -m -nd -np -nv --unlink "ftp://data.knmi.nl/download/harmonie_p1/0.2/noversion/0000/00/00/"
@@ -79,29 +79,46 @@ while true; do
 		rm *${MODEL_HOUR}_zygrib_nl.grb.bz2
 	fi
 
-	# Extract
-	echo "Extracting..."
+	# Make sure there is an empty directory for the latest model files
 	if [ -d harm36_v1_ned_surface_${MODEL_HOUR} ]; then
 		rm harm36_v1_ned_surface_${MODEL_HOUR}/*
 	else
 		mkdir harm36_v1_ned_surface_${MODEL_HOUR}
 	fi
-	cd harm36_v1_ned_surface_${MODEL_HOUR}
-	tar -xzvf ../harm36_v1_ned_surface_${MODEL_HOUR}.tgz
 
-	# Try to convert
-	echo "Starting the conversion..."
-	cd ~/Projects
-	./convert-harmonie.sh ${CURRENT_DATE} ${MODEL_HOUR}
-	# Everything went fine lets cleanup and we are done
-	if [ $? == 0 ]; then
-		rm ~/Downloads/work
-		rm -fr ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}
-		# rm ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}.tgz
-		break
+	# Before extracting go into the correct folder
+	cd ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}
+	echo "Extracting..."
+	tar -xzvf ../harm36_v1_ned_surface_${MODEL_HOUR}.tgz
+	cd ~/Downloads
+
+	# Remove the previous run
+	if [ -d work ]; then
+		rm work
 	fi
-	# Most likely the Harmonie ouput is not ready, so lets try again
-	echo "Failed, we'll try again..."
+	# Prepare for the new run
+	ln -s harm36_v1_ned_surface_${MODEL_HOUR} work
+
+	# Only convert if the correct files are present. (The downloaded tar-file only has the time
+	# in its name. For any date check we need the actual files from the tar-file.)
+	if [ -f work/harm36_v1_ned_surface_${CURRENT_DATE}${MODEL_HOUR}_000_GB ]; then
+		echo "Converting"
+		~/Projects/Harmonie/convert.py
+		# If everything went fine..
+		if [ $? -eq 0 ]; then
+			# ... lets remember it ...
+			echo "LAST_RUN=${CURRENT_DATE}${MODEL_HOUR}" > ~/Downloads/harmonie-last-run
+			# ..and cleanup the campgrouond
+			rm ~/Downloads/work
+			rm -fr ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}
+			break
+		else
+			echo "Unable to convert, breaking off the attempt..."
+			exit 2
+		fi
+	fi
+
+	echo "KNMI most likely not ready, we'll try again shortly..."
 	sleep 60
 done
 
