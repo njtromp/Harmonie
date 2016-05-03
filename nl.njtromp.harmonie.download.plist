@@ -1,1 +1,56 @@
-/Users/nico/Library/LaunchAgents/nl.njtromp.harmonie.download.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC '-//Apple//DTD PLIST 1.0//EN' 'http://www.apple.com/DTDs/PropertyList-1.0.dtd'>
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>nl.njtromp.harmonie.download</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>TZ</key>
+      <string>UTC</string>
+    </dict>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/nico/Projects/Harmonie/download-harmonie.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/nico/Projects/Harmonie</string>
+
+    <key>StartCalendarInterval</key>
+    <array>
+      <dict>
+        <key>Hour</key>
+        <integer>5</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <dict>
+        <key>Hour</key>
+        <integer>11</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <dict>
+        <key>Hour</key>
+        <integer>17</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+      <dict>
+        <key>Hour</key>
+        <integer>23</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+      </dict>
+    </array>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/nico/Downloads/harmonie.log</string>
+
+    <key>StandardOutPath</key>
+    <string>/Users/nico/Downloads/harmonie.log</string>
+  </dict>
+</plist>
