@@ -5,12 +5,6 @@
     <key>Label</key>
     <string>nl.njtromp.harmonie.download</string>
 
-    <key>EnvironmentVariables</key>
-    <dict>
-      <key>TZ</key>
-      <string>UTC</string>
-    </dict>
-
     <key>ProgramArguments</key>
     <array>
       <string>/Users/nico/Projects/Harmonie/download-harmonie.sh</string>
