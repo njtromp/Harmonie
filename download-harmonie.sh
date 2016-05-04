@@ -38,6 +38,7 @@ while ${WAIT_FOR_DOWNLOAD}; do
 	for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f1`; do
 		MODEL_HOUR=`echo "${MODEL}" | cut -d_ -f5`
 		echo "About to process [${MODEL}], run from [${MODEL_HOUR}]"
+		MODEL_RUNS="${MODEL_RUNS}\n\t${MODEL_HOUR}"
 	
 		# Removing old GRIB file
 		if [ -f *${MODEL_HOUR}_zygrib_nl.grb.bz2 ]; then
@@ -78,3 +79,5 @@ while ${WAIT_FOR_DOWNLOAD}; do
 done
 
 echo "Ready `date -u`."
+osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from runs ${MODEL_RUNS}\""
+
