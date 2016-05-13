@@ -38,21 +38,21 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	MODEL_RUNS="${MODEL_RUNS}\n\t${MODEL_HOUR}"
 
 	# Removing old GRIB file
-	if [ -f *${MODEL_HOUR}_zygrib_nl.grb.bz2 ]; then
-		rm *${MODEL_HOUR}_zygrib_nl.grb.bz2
+	if [ -f "*${MODEL_HOUR}_zygrib_nl.grb.bz2" ]; then
+		rm "*${MODEL_HOUR}_zygrib_nl.grb.bz2"
 	fi
 
 	# Make sure there is an empty directory for the latest model files
-	if [ -d harm36_v1_ned_surface_${MODEL_HOUR} ]; then
-		rm harm36_v1_ned_surface_${MODEL_HOUR}/*
+	if [ -d "harm36_v1_ned_surface_${MODEL_HOUR}" ]; then
+		rm "harm36_v1_ned_surface_${MODEL_HOUR}/*"
 	else
-		mkdir harm36_v1_ned_surface_${MODEL_HOUR}
+		mkdir "harm36_v1_ned_surface_${MODEL_HOUR}"
 	fi
 
 	# Before extracting go into the correct folder
-	cd ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}
+	cd "~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}"
 	echo "Extracting..."
-	tar -xzvf ../harm36_v1_ned_surface_${MODEL_HOUR}.tgz
+	tar -xzvf "../harm36_v1_ned_surface_${MODEL_HOUR}.tgz"
 	cd ~/Downloads
 
 	# Remove the previous run
@@ -60,7 +60,7 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 		rm work
 	fi
 	# Prepare for the new run
-	ln -s harm36_v1_ned_surface_${MODEL_HOUR} work
+	ln -s "harm36_v1_ned_surface_${MODEL_HOUR}" work
 
 	echo "Converting"
 	~/Projects/Harmonie/convert.py
@@ -69,7 +69,7 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	if [ $? -eq 0 ]; then
 		# ... cleanup the campground
 		rm ~/Downloads/work
-		rm -fr ~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}
+		rm -fr "~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}"
 	fi
 done
 
