@@ -38,10 +38,8 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	echo "About to process [${MODEL}], run from [${MODEL_HOUR}]"
 	MODEL_RUNS="${MODEL_RUNS}\n\t${MODEL_HOUR}"
 
-	# Removing old GRIB file
-	if [ -f "*${MODEL_HOUR}_zygrib_nl.grb.bz2" ]; then
-		rm "*${MODEL_HOUR}_zygrib_nl.grb.bz2"
-	fi
+	# Removing old GRIB files
+	rm ~/Downloads/*${MODEL_HOUR}_zygrib_nl.grb.bz2
 
 	# Make sure there is an empty directory for the latest model files
 	if [ -d "harm36_v1_ned_surface_${MODEL_HOUR}" ]; then
