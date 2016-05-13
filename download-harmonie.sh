@@ -33,6 +33,7 @@ done
 
 # Convert only the newly downloaded model data.
 for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f1`; do
+	cd ~/Downloads
 	MODEL_HOUR=`echo "${MODEL}" | cut -d_ -f5`
 	echo "About to process [${MODEL}], run from [${MODEL_HOUR}]"
 	MODEL_RUNS="${MODEL_RUNS}\n\t${MODEL_HOUR}"
@@ -50,7 +51,7 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	fi
 
 	# Before extracting go into the correct folder
-	cd "~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}"
+	cd "harm36_v1_ned_surface_${MODEL_HOUR}"
 	echo "Extracting..."
 	tar -xzvf "../harm36_v1_ned_surface_${MODEL_HOUR}.tgz"
 	cd ~/Downloads
@@ -69,7 +70,7 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	if [ $? -eq 0 ]; then
 		# ... cleanup the campground
 		rm ~/Downloads/work
-		rm -fr "~/Downloads/harm36_v1_ned_surface_${MODEL_HOUR}"
+		rm -fr "harm36_v1_ned_surface_${MODEL_HOUR}"
 	fi
 done
 
