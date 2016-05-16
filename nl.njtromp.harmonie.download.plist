@@ -13,6 +13,9 @@
     <key>WorkingDirectory</key>
     <string>/Users/nico/Projects/Harmonie</string>
 
+    <key>RunAtLoad</key>
+    <true/>
+
     <key>StartCalendarInterval</key>
     <array>
       <dict>
