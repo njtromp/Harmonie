@@ -20,7 +20,6 @@ while true; do
 	echo "Checking for new data `date -u`"
 	# User and password are stored in .netrc!
 	/usr/local/bin/wget -m -nd -np -nv --unlink "ftp://data.knmi.nl/download/harmonie_p1/0.2/noversion/0000/00/00/" 2> ~/Downloads/harmonie-ftp.log
-	# /usr/local/bin/wget -m -nd -np -nv --unlink "ftp://data.knmi.nl/download/harmonie_p1/0.2/noversion/0000/00/00/"
 	# Download successfull?
 	DOWNLOADS=`grep tgz ~/Downloads/harmonie-ftp.log|wc -l|xargs`
 	echo "Number of upateted files [${DOWNLOADS}]"
@@ -28,9 +27,11 @@ while true; do
 		break
 	fi
 	# Some delay in order to prevent the FTP server from overloading
+	echo "."
 	sleep 60
 done
 
+LAST_RUN=0
 # Convert only the newly downloaded model data.
 for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f1`; do
 	cd ~/Downloads
@@ -61,6 +62,14 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	# Prepare for the new run
 	ln -s "harm36_v1_ned_surface_${MODEL_HOUR}" work
 
+	# Register the data-time of the most recent run
+	CURRENT_RUN=`ls ~/Downloads/work/*_000_GB|cut -d'_' -f5`
+	echo "Last [${LAST_RUN}] current [${CURRENT_RUN}]"
+	if [ "${CURRENT_RUN}" -gt "${LAST_RUN}" ]; then
+		LAST_RUN=${CURRENT_RUN}
+	fi
+	echo "Last [${LAST_RUN}]"
+
 	echo "Converting"
 	~/Projects/Harmonie/convert.py
 
@@ -72,6 +81,13 @@ for MODEL in `grep tgz ~/Downloads/harmonie-ftp.log | cut -d\" -f2 | cut -d\. -f
 	fi
 done
 
+# If there is a more recent run available, run the script again...
+THRESHOLD=`date -v-9H -u +"%Y%m%d%H"`
+echo "Last [${LAST_RUN}] threshold [${THRESHOLD}]"
+if [ "${LAST_RUN}" -lt "${THRESHOLD}" ]; then
+	~/Projects/Harmonie/download-harmonie.sh
+fi
+
+# Goodbye
 echo "Ready `date -u`."
 osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from runs ${MODEL_RUNS}\""
-
