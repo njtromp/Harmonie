@@ -85,7 +85,7 @@ while true; do
 	if [ "${LAST_RUN}" -ge "${THRESHOLD}" ]; then
 		# Goodbye
 		echo "Ready `date -u`."
-		osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from runs ${MODEL_RUNS}\""
+		osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from run(s) ${MODEL_RUNS}\""
 		exit 0
 	fi
 done
