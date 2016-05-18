@@ -19,7 +19,7 @@ while true; do
 	# (Might not be a good idea though...)
 	while true; do
 		echo "Checking for new data `date -u`"
-		# User and password are stored in .netrc!
+		# User and password are stored in ~/.netrc!
 		/usr/local/bin/wget -m -nd -np -nv --unlink "ftp://data.knmi.nl/download/harmonie_p1/0.2/noversion/0000/00/00/" 2> ~/Downloads/harmonie-ftp.log
 		# Download successfull?
 		DOWNLOADS=`grep tgz ~/Downloads/harmonie-ftp.log|wc -l|xargs`
@@ -67,7 +67,6 @@ while true; do
 		if [ "${CURRENT_RUN}" -gt "${LAST_RUN}" ]; then
 			LAST_RUN=${CURRENT_RUN}
 		fi
-		echo "Last [${LAST_RUN}]"
 
 		echo "Converting"
 		~/Projects/Harmonie/convert.py
@@ -80,7 +79,8 @@ while true; do
 		fi
 	done
 
-	# If there is a more recent run available, run the script again...
+	# If there is a more recent run available which we missed, run the script again...
+	# The check is the other way around, otherwise we can't bail out of the while-loop.
 	THRESHOLD=`date -v-9H -u +"%Y%m%d%H"`
 	if [ "${LAST_RUN}" -ge "${THRESHOLD}" ]; then
 		# Goodbye
