@@ -3,16 +3,19 @@ echo "Activated at `date -u`"
 
 cd ~/Downloads
 
-# Wait untill the lid is open so we really can download...
-source ~/Downloads/lid-status
-if [ "${LID_STATUS}" == "CLOSED" ]; then
-	echo "Waiting for my master...."
-fi
-while [ "${LID_STATUS}" == "CLOSED" ]; do
-	sleep 60
-	# Refresh the status
+# Only wait for the lid to be open if supported.
+if [ -f "~/Downloads/lid-status" ]; then
+	# Wait untill the lid is open so we really can download...
 	source ~/Downloads/lid-status
-done
+	if [ "${LID_STATUS}" == "CLOSED" ]; then
+		echo "Waiting for my master...."
+	fi
+	while [ "${LID_STATUS}" == "CLOSED" ]; do
+		sleep 60
+		# Refresh the status
+		source ~/Downloads/lid-status
+	done
+fi
 
 while true; do
 	# Keep trying to download if it failed until it succeeds.
