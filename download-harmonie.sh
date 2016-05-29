@@ -4,7 +4,7 @@ echo "Activated at `date -u`"
 cd ~/Downloads
 
 # Only wait for the lid to be open if supported.
-if [ -f "~/Downloads/lid-status" ]; then
+if [ -f ~/Downloads/lid-status ]; then
 	# Wait untill the lid is open so we really can download...
 	source ~/Downloads/lid-status
 	if [ "${LID_STATUS}" == "CLOSED" ]; then
@@ -82,13 +82,15 @@ while true; do
 		fi
 	done
 
+	# OS-X only display trick
+	osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from run(s) ${MODEL_RUNS}\""
+
 	# If there is a more recent run available which we missed, run the script again...
 	# The check is the other way around, otherwise we can't bail out of the while-loop.
 	THRESHOLD=`date -v-9H -u +"%Y%m%d%H"`
 	if [ "${LAST_RUN}" -ge "${THRESHOLD}" ]; then
 		# Goodbye
 		echo "Ready `date -u`."
-		osascript -e "display alert \"KNMI update\" message \"New Harmonie data is available from run(s) ${MODEL_RUNS}\""
 		exit 0
 	fi
 done
